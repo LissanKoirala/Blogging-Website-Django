@@ -1,0 +1,31 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+        <div class="media-body">
+
+        {% if user.id in verified_users %}
+          <h6 class="account-heading">{{ user.username }}</h6><img src="https://icon-library.com/images/verified-icon-png/verified-icon-png-12.jpg" style="max-height: 22px;" alt="Verified!"/>
+        {% else %}
+          <h2 class="account-heading">{{ user.username }}</h2>
+        {% endif %}
+
+          <p class="text-secondary">{{ user.email }}</p>
+        </div>
+      </div>
+      <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <fieldset class="form-group">
+              <legend class="border-bottom mb-4">Profile Info</legend>
+              {{ u_form|crispy }} 
+              {{ p_form|crispy }}
+          </fieldset>
+          <div class="form-group">
+              <button class="btn btn-outline-info" type="submit">Update</button>
+          </div>
+          <h6>Looking up to change your password? - <a style="text-decoration:none" href="{% url 'password_change' %}">Change Password</a></h6>
+      </form>
+    </div>
+{% endblock content %}

@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% block title %}Videos | DiamondNepal | YouTube{% endblock %}
+{% block content %}
+
+<style type="text/css">
+	.responsive-youtube
+	{overflow:hidden; padding-bottom:56.25%; position:relative; height:0;}
+	.responsive-youtube iframe
+	{left:0; top:0; height:100%; width:100%; position:absolute;}
+</style>
+
+<h1>Diamond Nepal - Videos</h1>
+<br/>
+
+
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/9nnRScuyrYs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/vN85RSUPiqc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/y6EBOvK_dKE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/GQ4p5qj1NAg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/f03Mo5lk0yo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<a href="{% url 'video_two' %}"><button type="button" class="btn btn-danger">Older Videos Page</button>
+
+{% endblock content %}

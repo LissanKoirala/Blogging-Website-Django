@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='shortcut icon' type='image/png' href="https://diamondnepal.com/media/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172335956-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-172335956-1');
+    </script>
+    <script data-ad-client="ca-pub-6840824982843094" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>    
+    <title>Home - DiamondNepal</title>
+
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">DiamondNepal</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
+              <a class="nav-item nav-link" href="{% url 'video' %}">Video</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/4/">Sahitya</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/2/">Nepali&nbsp;News</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/3/">Parbshi&nbsp;News</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/1/">Entertainment</a>
+              <!--<a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>-->
+            </div>
+            <!-- Navbar Right Side -->
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if user.is_authenticated %}
+                  {% if user.username == "Admin-LissanKoirala" %}
+                    <a class="nav-item nav-link" href="https://diamondnepal.com/cloud">Cloud</a>
+                  {%endif%}
+                <a class="nav-item nav-link" href="{% url 'post-create' %}">Create Post</a>
+                <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-12">
+      <style type="text/css">
+        input {
+          width: 100%;
+        }
+      </style>
+      <form method="GET" action="/search">
+        <input class="form-control" placeholder="Search..." name="query" id="query" type="text" aria-label="Search">
+      </form><br/>
+      </div>
+
+    <div class="col-md-4">
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="{% url 'latest-post'%}">Latest&nbsp;Posts</a></h3>
+            <div class="article-metadata">
+                  {% if latest.author.id in verified_users %}
+                    <a class="mr-2" href="{% url 'user-posts' latest.author.username %}">{{ latest.author }}</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+                  {% else %}
+                    <a class="mr-2" href="{% url 'user-posts' latest.author.username %}">{{ latest.author }}</a>
+                  {% endif %}
+              <small class="text-muted">{{ latest.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h4><a class="article-title" href="{% url 'post-detail' latest.id %}">{{ latest.title }}</a></h4>
+            <p class="article-content"><div>{{ latest.content|safe|slice:":200" }}...</div></p>
+            <a style="text-decoration:none" href="{% url 'post-detail' latest.id %}">More Posts...</a> 
+          </div>
+        </article>
+    </div>
+
+    <div class="col-md-4">
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="https://diamondnepal.com/category/4/">Sahitya</a></h3>
+            <div class="article-metadata">
+                  {% if sahitya.author.id in verified_users %}
+                    <a class="mr-2" href="{% url 'user-posts' sahitya.author.username %}">{{ sahitya.author }}</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+                  {% else %}
+                    <a class="mr-2" href="{% url 'user-posts' sahitya.author.username %}">{{ sahitya.author }}</a>
+                  {% endif %}
+              <small class="text-muted">{{ sahitya.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h4><a class="article-title" href="{% url 'post-detail' sahitya.id %}">{{ sahitya.title }}</a></h4>
+            <p class="article-content"><div>{{ sahitya.content|safe|slice:":200" }}...</div></p>
+            <a style="text-decoration:none" href="{% url 'post-detail' sahitya.id %}">More Posts...</a> 
+          </div>
+        </article>
+    </div>
+
+    <div class="col-md-4">
+      <style type="text/css">
+        .responsive-youtube
+        {overflow:hidden; padding-bottom:56.25%; position:relative; height:0;}
+        .responsive-youtube iframe
+        {left:0; top:0; height:100%; width:100%; position:absolute;}
+      </style>
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="{% url 'video' %}">Video</a></h3>
+            <div class="article-metadata">
+                  <a class="mr-2" href="{% url 'video' %}">Videos</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!">
+              <small class="text-muted">2 July, 2020</small>
+            </div>
+            <div class="responsive-youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/KYHhws02ysk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+          </div>
+        </article>
+
+    </div>
+
+    <div class="col-md-4">
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="https://diamondnepal.com/category/2/">Nepali&nbsp;News</a></h3>
+            <div class="article-metadata">
+                  {% if nepalinews.author.id in verified_users %}
+                    <a class="mr-2" href="{% url 'user-posts' nepalinews.author.username %}">{{ nepalinews.author }}</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+                  {% else %}
+                    <a class="mr-2" href="{% url 'user-posts' nepalinews.author.username %}">{{ nepalinews.author }}</a>
+                  {% endif %}
+              <small class="text-muted">{{ nepalinews.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h4><a class="article-title" href="{% url 'post-detail' nepalinews.id %}">{{ nepalinews.title }}</a></h4>
+            <p class="article-content"><div>{{ nepalinews.content|safe|slice:":200" }}...</div></p>
+            <a style="text-decoration:none" href="{% url 'post-detail' nepalinews.id %}">More Posts...</a> 
+          </div>
+        </article>
+    </div>
+
+    <div class="col-md-4">
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="https://diamondnepal.com/category/1/">Entertainment</a></h3>
+            <div class="article-metadata">
+                  {% if entertainment.author.id in verified_users %}
+                    <a class="mr-2" href="{% url 'user-posts' entertainment.author.username %}">{{ entertainment.author }}</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+                  {% else %}
+                    <a class="mr-2" href="{% url 'user-posts' entertainment.author.username %}">{{ entertainment.author }}</a>
+                  {% endif %}
+              <small class="text-muted">{{ entertainment.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h4><a class="article-title" href="{% url 'post-detail' entertainment.id %}">{{ entertainment.title }}</a></h4>
+            <p class="article-content"><div>{{ entertainment.content|safe|slice:":200" }}...</div></p>
+            <a style="text-decoration:none" href="{% url 'post-detail' entertainment.id %}">More Posts...</a> 
+          </div>
+        </article>
+    </div>
+
+    <div class="col-md-4">
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="{% url 'photo-gallery' %}">Photo Gallery</a></h3>
+            <div class="article-metadata">
+		<a class="mr-2" href="#">KoiralaNawaraj</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+		<small class="text-muted">August 17, 2020</small>
+	    </div>
+		<style type="text/css">
+		  .fling-minislide {width:100%; height:100%; overflow:hidden; position:relative; }	
+		  .fling-minislide img{ position:absolute; animation:fling-minislide 20s infinite; opacity:0; width: 100%; height: 100%;}
+		  @keyframes fling-minislide {25%{opacity:1;} 40%{opacity:0;}}
+		  .fling-minislide img:nth-child(4){animation-delay:0s;}
+		  .fling-minislide img:nth-child(3){animation-delay:5s;}
+		  .fling-minislide img:nth-child(2){animation-delay:10s;}
+		  .fling-minislide img:nth-child(1){animation-delay:15s;}
+		  .fling-minislide {width:100%; height:100%; padding-bottom: 60%; overflow:hidden; position:relative; }
+		</style>
+		<div class="fling-minislide">
+		  <img src="https://diamondnepal.com/media/image4.jpg" alt="Slide Image 4" />
+		  <img src="https://diamondnepal.com/media/image5.jpg" alt="Slide Image 3" />
+		  <img src="https://diamondnepal.com/media/image2.jpg" alt="Slide Image 2" />
+		  <img src="https://diamondnepal.com/media/image1.jpg" alt="Slide Image 1" />
+		</div>
+            </div>
+        </article>
+    </div>
+
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3><a style="text-decoration:none" href="{% url 'blog-about' %}">About Us</a></h3>
+            <p class='text-muted'>Latest updates on social medias!</p>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://www.facebook.com/diamondnepals" target="_blank"><img src="https://diamondnepal.com/media/facebook_ico.png" style="max-height: 32px;" alt="Facebook">          Facebook</a></li>
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://www.youtube.com/channel/UCOkhCd1RuV39yoSFjDRmqaQ?sub_confirmation=1" target="_blank"><img src="https://diamondnepal.com/media/youtube_ico.png" style="max-height: 32px;" alt="YouTube">          YouTube</a></li>
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://www.instagram.com/diamond_nepal/" target="_blank"><img src="https://diamondnepal.com/media/instagram_ico.png" style="max-height: 32px;" alt="YouTube">          Instagram</a></li>
+
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://vm.tiktok.com/J21wHXg/" target="_blank"><img src="https://diamondnepal.com/media/tiktok_ico.png" style="max-height: 32px;" alt="YouTube">          TikTok</a></li> 
+              </ul>
+          </div>
+      </div>
+
+    <div class="col-md-4">
+        <article class="media content-section">
+          <div class="media-body">
+            <h3><a style="text-decoration:none" href="https://diamondnepal.com/category/3/">Parbshi&nbsp;News</a></h3>
+            <div class="article-metadata">
+                  {% if parbshi.author.id in verified_users %}
+                    <a class="mr-2" href="{% url 'user-posts' parbshi.author.username %}">{{ parbshi.author }}</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+                  {% else %}
+                    <a class="mr-2" href="{% url 'user-posts' parbshi.author.username %}">{{ parbshi.author }}</a>
+                  {% endif %}
+              <small class="text-muted">{{ parbshi.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h4><a class="article-title" href="{% url 'post-detail' parbshi.id %}">{{ parbshi.title }}</a></h4>
+            <p class="article-content"><div>{{ parbshi.content|safe|slice:":200" }}...</div></p>
+            <a style="text-decoration:none" href="{% url 'post-detail' parbshi.id %}">More Posts...</a> 
+          </div>
+        </article>
+    </div>
+
+    <div class="col-md-4">
+      <div class="content-section">
+        <h3><a style="text-decoration:none" href="{% url 'enquiries' %}">Contact Us</a></h3>
+        <p class='text-muted'>You can contact us via email or by this <a style="text-decoration:none" href="{% url 'enquiries' %}">Enquiry Form</a>
+          <ul class="list-group">
+            <li class="list-group-item list-group-item-light"><a style="text-decoration:none" href="mailto:info@diamondnepal.com" target="_top">info@diamondnepal.com</a></li>
+            <li class="list-group-item list-group-item-light"><a style="text-decoration:none" href="mailto:contact@diamondnepal.com" target="_top">contact@diamondnepal.com</a></li>
+            <li class="list-group-item list-group-item-light"><a style="text-decoration:none" href="mailto:accounts@diamondnepal.com" target="_top">accounts@diamondnepal.com</a></li>
+          </ul>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+
+
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+  </body>
+</html>
+

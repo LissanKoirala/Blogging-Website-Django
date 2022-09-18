@@ -1,0 +1,188 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <meta name="description" content="{{ object.content }}">
+    <meta name="author" content="{{ object.author }}">
+
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="{{ object.title }}" />
+    <meta property="og:description" content="{{ object.content }}" />
+    {% if post.post_image %}
+      <meta property="og:image" content="{{ post.post_image.url }} " />
+    {% endif %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel='shortcut icon' type='image/png' href="https://diamondnepal.com/media/favicon.png" /> 
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/main.css' %}">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172335956-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-172335956-1');
+    </script>
+    <style type="text/css">
+      .responsive-youtube
+      {overflow:hidden; padding-bottom:56.25%; position:relative; height:0;}
+      .responsive-youtube iframe
+      {left:0; top:0; height:100%; width:100%; position:absolute;}
+    </style>    
+    <title>Diamond Nepal | {{ object.title }}</title>
+
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <a class="navbar-brand mr-4" href="{% url 'blog-home' %}">DiamondNepal</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="{% url 'blog-home' %}">Home</a>
+              <a class="nav-item nav-link" href="{% url 'video' %}">Video</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/4/">Sahitya</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/2/">Nepali&nbsp;News</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/3/">Parbshi&nbsp;News</a>
+              <a class="nav-item nav-link" href="https://diamondnepal.com/category/1/">Entertainment</a>
+              <!--<a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>-->
+            </div>
+            <!-- Navbar Right Side -->
+            <!-- Navbar Right Side -->
+            <div class="navbar-nav">
+              {% if user.is_authenticated %}
+                <a class="nav-item nav-link" href="{% url 'post-create' %}">Create Post</a>
+                <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+              {% else %}
+                <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
+                <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+            <div class="media-body">
+              <div class="article-metadata">
+              {% if post.author.id in verified_users %}
+                <a class="mr-2" href="#">{{ object.author }}</a><img src="https://diamondnepal.com/media/verified.jpg" style="max-height: 16px;" alt="Verified!"/>
+              {% else %}
+                <a class="mr-2" href="#">{{ object.author }}</a>
+              {% endif %}
+                <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+                {% if object.author == user %}
+                  <div>
+                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        <div class="row">
+        <div class="col-md-12">
+          <article class="media content-section">
+            <div class="media-body">
+              <div class="article-metadata">
+              <h2 class="article-title">{{ object.title }}</h2>
+              <p class="article-content">{{ object.content|safe }}</p>
+              {% if post.post_image %}
+                <style>
+                  .responsive {
+                    max-width: 100%;
+                    height: auto;
+                  }
+                </style>
+                <img src="{{ post.post_image.url }}" alt="User's posted Image" class="responsive"><br><br>
+              {% endif %}
+              {% if user.is_authenticated %}
+                <form action="{% url 'like_post' object.pk %}" method="POST">
+                  {% csrf_token %}
+                  {% if user.object.total_likes %}
+                    <button type="submit", name="post_id", value="{{ object.id }}">Unlike</button> 
+                  {% else %}
+                    <button type="submit", name="post_id", value="{{ object.id }}"><img src="https://diamondnepal.com/media/like.png"></button> 
+                  {% endif %}
+                  {{ object.total_likes }}
+                </form>
+              {% else %}
+                <h6><button><img src="https://diamondnepal.com/media/like.png"></button> {{ object.total_likes }} | Please <a style="text-decoration:none" href="{% url 'login' %}">Login</a> to like</h6>
+              {% endif %}
+            </div>
+            </div>
+          </article>
+          </div>
+          </div>
+          <h2>Comments...</h2>
+          {% if not post.comments.all %}
+            <h4>No Comments Yet, Add one now!</h4>
+          {% else %}
+
+          {% for comment in post.comments.all %}
+            <strong>{{ comment.name }} - {{ comment.date_added|date:"F d, Y" }}</strong><br/>
+            <p>{{ comment.body }}</p>
+          {% endfor %}
+          {% endif %}
+          <br/>
+          <a href="{% url 'add_comment' post.pk %}"><button type="button" class="btn btn-primary">Add Comment</button></a>
+          <br/><br/>
+        </div>
+
+        <div class="col-md-4">
+          <div class="content-section">
+            <h3><a style="text-decoration:none" href="{% url 'blog-about' %}">About Us</a></h3>
+            <p class='text-muted'>Latest updates on social medias!
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://www.facebook.com/diamondnepals" target="_blank"><img src="https://diamondnepal.com/media/facebook_ico.png" style="max-height: 32px;" alt="Facebook">          Facebook</a></li>
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://www.youtube.com/channel/UCOkhCd1RuV39yoSFjDRmqaQ?sub_confirmation=1" target="_blank"><img src="https://diamondnepal.com/media/youtube_ico.png" style="max-height: 32px;" alt="YouTube">          YouTube</a></li>
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://www.instagram.com/diamond_nepal/" target="_blank"><img src="https://diamondnepal.com/media/instagram_ico.png" style="max-height: 32px;" alt="YouTube">          Instagram</a></li>
+
+                <li class="list-group-item list-group-item-light"><div class="social-icons section">
+                    <a style="text-decoration:none" href="https://vm.tiktok.com/J21wHXg/" target="_blank"><img src="https://diamondnepal.com/media/tiktok_ico.png" style="max-height: 32px;" alt="YouTube">          TikTok</a></li> 
+       </ul>
+            </p>
+          </div>
+            <div class="content-section">
+            <h3><a style="text-decoration:none" href="{% url 'enquiries' %}">Contact Us</a></h3>
+            <p class='text-muted'>You can contact us via email or by this <a style="text-decoration:none" href="{% url 'enquiries' %}">Enquiry Form</a>
+              <ul class="list-group">
+                <li class="list-group-item list-group-item-light"><a style="text-decoration:none" href="mailto:info@diamondnepal.com" target="_top">info@diamondnepal.com</a></li>
+                <li class="list-group-item list-group-item-light"><a style="text-decoration:none" href="mailto:contact@diamondnepal.com" target="_top">contact@diamondnepal.com</a></li>
+                <li class="list-group-item list-group-item-light"><a style="text-decoration:none" href="mailto:accounts@diamondnepal.com" target="_top">accounts@diamondnepal.com</a></li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+
+  </body>
+</html>

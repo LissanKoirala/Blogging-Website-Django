@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+  	<meta charset="utf-8">
+    	<meta name="description" content="Cloud server which gives you access to upload and download from anywhere.">
+   	<meta name="author" content="Lissan Koirala">
+   	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+	<link rel='shortcut icon' type='image/png' href="https://diamondnepal.com/media/cloud.png" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<title>Cloud Server</title>
+
+  </head>
+  <body>
+		<main role="main" class="container">
+			<br/>
+			<h1>Cloud Server</h1><h4>Welcome, {% if user.username %}{{ user.username }}{% else %}Guest{% endif %}</h4><br>
+			<div class="row">
+				<div class="col-md-4">
+					{% if user.is_superuser %}
+					<table class="table">
+						<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Disk Usage</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<th scope="row">-</th>
+							<td>{{ DISK1 }}</td>
+						</tr>
+						<tr>
+							<th scope="row">-</th>
+							<td>{{ DISK2 }}</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div class="col-md-4">
+					<table class="table">
+						<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Server Info</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<th scope="row">-</th>
+							<td>CPU : {{ CPU }}%</td>
+						</tr>
+						<tr>
+							<th scope="row">-</th>
+							<td>RAM : {{ RAM }}%</td>
+						</tr>
+						</tbody>
+					</table>
+				{% endif %}
+				</div>
+			</div>
+			<br/>
+			<hr>
+			{% if user.is_superuser %}
+				<form method="post" enctype="multipart/form-data">{% csrf_token %}
+					<input type="file" name="my_file">
+					<button class="btn btn-success" type="submit">Upload</button>
+				</form>
+				<hr>
+			{% endif %}
+			<h2>Uploaded Files</h2><br>
+			<table class="table">
+			<thead>
+				<tr>
+				<th scope="col">#</th>
+				<th scope="col">File name</th>
+				<th scope="col">Size</th>
+				<th scope="col">File Type</th>
+				<th scope="col">Upload Date</th>
+				<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for file in files %}
+					{% url 'files_home:download_file' as download_file_url%}
+	
+					<tr>
+					<th scope="row">{{ forloop.counter }}</th>
+					<td>{{ file.readable_name }}</td>
+					<td>{{ file.size_mb }} MB</td>
+					<td>{{ file.file_type }}</td>
+					<td>{{ file.upload_datetime|date:"F d, Y" }}</td>
+					<td>
+						<form action="{{ download_file_url }}" method="post">
+						{% csrf_token %}
+						{{ form }}
+						<input type="hidden" name="path" value="{{ file.upload.name }}">
+						<input type="submit" class="btn btn-primary label-success" value="Download" />
+						</form>
+					</td>
+					</tr>
+	
+				{% endfor %}
+			</tbody>
+			</table>
+			<hr>
+			<br><br>
+		</main>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </body>
+</html>
+
